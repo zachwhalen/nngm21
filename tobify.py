@@ -49,13 +49,13 @@ tx = re.sub(lb," ",book)
 doc = nlp(tx)
 
 # Use named entity recognition to get a list of all the named people
-names = ["Treasure"]
+names = []
 for ent in doc.ents:
   if (ent.label_ is "PERSON"):
     names.append(ent.text)
 
 # do some work to figure out how to replace all the Tobys
-k = []
+k = [("treasure","Toby"),("Treasure","Toby"),("TREASURE","TOBY"),("Black Dog","Toby Toby"), ("TRELAWNEY","TOBY")]
 for n in list(set(names)):
   # ignore some things that are likely not to be names
   if (n[0] is not "1" and 
@@ -114,8 +114,8 @@ for im in soup.find_all("img"):
 
 soup_string = str(soup)
 for toby in k:
-  pattern = re.compile(r"" + toby[0] + "")
-  soup_string = re.sub(pattern,toby[1],soup_string)
+  pattern = re.compile(r"(\W)" + toby[0] + "(\W)")
+  soup_string = re.sub(pattern,r"\1" + toby[1] + r"\2",soup_string)
 
 # prepare WeasyPrint
 font_config = FontConfiguration()
@@ -196,4 +196,4 @@ h3 {
 
 ''', font_config=font_config)
 
-rendered_html.write_pdf('/content/toby-island.pdf', stylesheets=[css],font_config=font_config)
+rendered_html.write_pdf('/content/toby-island-by-toby.pdf', stylesheets=[css],font_config=font_config)
